@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tilaa Joulupukin puhelu</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 2rem; }
+    input, button { width: 100%; padding: 0.8rem; margin: 0.5rem 0; }
+  </style>
+</head>
+<body>
+  <h1>🎅 Tilaa Joulupukin puhelu!</h1>
+  <form id="callForm">
+    <label>Vanhemman nimi:</label>
+    <input type="text" name="name" required />
+    <label>Lapsen puhelinnumero:</label>
+    <input type="tel" name="phone" required placeholder="+358..." />
+    <button type="submit">Maksa ja tilaa puhelu</button>
+  </form>
+  <p id="responseMsg"></p>
+
+  <script>
+    document.getElementById('callForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const data = {
+        name: formData.get('name'),
+        phone: formData.get('phone')
+      };
+      const res = await fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      document.getElementById('responseMsg').innerText = await res.text();
+    });
+  </script>
+</body>
+</html>
