@@ -4,6 +4,8 @@ const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const axios = require('axios');
 const path = require('path');
 const app = express();
+const twilio = require('twilio');
+const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -11,9 +13,21 @@ app.use(express.static('public'));
 
 app.post('/submit', async (req, res) => {
   const { name, phone } = req.body;
-  console.log(`Puhelu varattu: ${name} -> ${phone}`);
-  res.status(200).send('Tilaus vastaanotettu!');
+
+  try {
+    await client.calls.create({
+      url: 'https://ai-joulupukki.onrender.com/voice', // tämä on AI:n puhesivusi
+      to: phone,
+      from: process.env.TWILIO_PHONE_NUMBER // twilion ostettu numero
+    });
+
+    res.status(200).send(`Puhelu lähetetty ${name}lle numeroon ${phone}`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Jokin meni vikaan puhelua lähettäessä');
+  }
 });
+
 
 app.post('/voice', async (req, res) => {
   const twiml = new VoiceResponse();
