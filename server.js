@@ -6,7 +6,10 @@ const path = require('path');
 const twilio = require('twilio');
 const app = express();
 
-const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+const client = require('twilio')(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN
+);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
