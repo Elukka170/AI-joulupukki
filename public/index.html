@@ -3,22 +3,50 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Tilaa Joulupukin puhelu</title>
+  <title>AI-Joulupukin puhelu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas&display=swap" rel="stylesheet">
   <style>
-    body { font-family: Arial, sans-serif; max-width: 500px; margin: auto; padding: 2rem; }
-    input, button { width: 100%; padding: 0.8rem; margin: 0.5rem 0; }
+    body {
+      font-family: 'Mountains of Christmas', cursive;
+      background: url('https://images.unsplash.com/photo-1543872084-c7bd3822856d?auto=format&fit=crop&w=1600&q=80') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 0.8rem;
+      margin: 0.5rem 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 1.1rem;
+    }
+    button {
+      background-color: #e63946;
+      color: white;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
-  <h1>🎅 Tilaa Joulupukin puhelu!</h1>
-  <form id="callForm">
-    <label>Vanhemman nimi:</label>
-    <input type="text" name="name" required />
-    <label>Lapsen puhelinnumero:</label>
-    <input type="tel" name="phone" required placeholder="+358..." />
-    <button type="submit">Maksa ja tilaa puhelu</button>
-  </form>
-  <p id="responseMsg"></p>
+  <div class="container">
+    <h1>🎅 AI-Joulupukki soittaa!</h1>
+    <p>Täytä tiedot ja saat puhelun Joulupukilta 🎄</p>
+    <form id="callForm">
+      <input type="text" name="name" placeholder="Vanhemman nimi" required />
+      <input type="tel" name="phone" placeholder="+358..." required />
+      <button type="submit">Maksa ja tilaa puhelu</button>
+    </form>
+    <p id="responseMsg"></p>
+  </div>
 
   <script>
     document.getElementById('callForm').addEventListener('submit', async (e) => {
@@ -28,13 +56,16 @@
         name: formData.get('name'),
         phone: formData.get('phone')
       };
+
       const res = await fetch('/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
+
       document.getElementById('responseMsg').innerText = await res.text();
     });
   </script>
 </body>
 </html>
+
