@@ -3,32 +3,35 @@ const express = require('express');
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 const axios = require('axios');
 const path = require('path');
-const app = express();
 const twilio = require('twilio');
+const app = express();
+
 const client = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.static('public'));
 
+// Lomakkeen käsittely ja puhelun käynnistys
 app.post('/submit', async (req, res) => {
   const { name, phone } = req.body;
 
   try {
     await client.calls.create({
-      url: 'https://ai-joulupukki.onrender.com/voice', // tämä on AI:n puhesivusi
+      url: 'https://ai-joulupukki.onrender.com/voice', // tämä yhdistää Joulupukin AI-puheeseen
       to: phone,
-      from: process.env.TWILIO_PHONE_NUMBER // twilion ostettu numero
+      from: process.env.TWILIO_PHONE_NUMBER
     });
 
+    console.log(`Puhelu käynnistetty ${name}lle numeroon ${phone}`);
     res.status(200).send(`Puhelu lähetetty ${name}lle numeroon ${phone}`);
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Jokin meni vikaan puhelua lähettäessä');
+    console.error('Virhe puhelussa:', err.message);
+    res.status(500).send('Puhelun lähetys epäonnistui. Tarkista Twilio-asetukset.');
   }
 });
 
-
+// Ensimmäinen AI-vuorovaikutus (aloitus)
 app.post('/voice', async (req, res) => {
   const twiml = new VoiceResponse();
   const gather = twiml.gather({ input: 'speech', action: '/handle_speech', method: 'POST' });
@@ -37,8 +40,10 @@ app.post('/voice', async (req, res) => {
   res.send(twiml.toString());
 });
 
+// AI-vastaus GPT-4o:n avulla
 app.post('/handle_speech', async (req, res) => {
   const userInput = req.body.SpeechResult || 'En kuullut vastaustasi';
+
   try {
     const openaiResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
       model: 'gpt-4o',
@@ -53,6 +58,7 @@ app.post('/handle_speech', async (req, res) => {
         'Content-Type': 'application/json'
       }
     });
+
     const responseText = openaiResponse.data.choices[0].message.content;
     const twiml = new VoiceResponse();
     twiml.say(responseText);
@@ -66,6 +72,8 @@ app.post('/handle_speech', async (req, res) => {
     res.send(twiml.toString());
   }
 });
+
+// Renderissä vaaditaan oikean portin käyttö
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Serveri käynnissä portissa ${PORT}`);
