@@ -52,7 +52,8 @@ app.post('/handle_speech', async (req, res) => {
     res.send(twiml.toString());
   }
 });
-
-app.listen(3000, () => {
-  console.log('Serveri käynnissä portissa 3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Serveri käynnissä portissa ${PORT}`);
 });
+
