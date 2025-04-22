@@ -1,3 +1,4 @@
 OPENAI_API_KEY=lisää_tänne_openai_avain
 TWILIO_ACCOUNT_SID=lisää_tänne_twilio_sid
 TWILIO_AUTH_TOKEN=lisää_tänne_twilio_token
+TWILIO_PHONE_NUMBER=+1234567890  # Twiliolta ostettu numero, kansainvälisessä muodossa
